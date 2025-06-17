@@ -1,0 +1,54 @@
+main {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-items: flex-start;
+  padding: 30px;
+  padding-top: 30px;
+  flex: 0;
+}
+
+.input-container {
+  margin-bottom: 5px;
+}
+
+canvas {
+  margin-top: 30px;
+  background-color: #303030;
+}
+
+.dot-container {
+  position: relative;
+}
+
+.dot-debug {
+  position: absolute;
+  top: 70px;
+  left: 0px;
+}
+
+.dot {
+  position: absolute;
+  background: darkmagenta;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  transform: rotate(0deg);
+  top: 10px;
+  left: 25px;
+  transition: none;
+}
+
+.example-code {
+  padding-top: 30px;
+}
+
+pre code {
+  font-size: 16px;
+  color: #9eaeb3;
+
+  .keyword { color: rgb(108, 158, 220); }
+  .var { color: rgb(0, 255, 229); }
+  .number { color: #becfd4; }
+  .function { color: rgb(115, 175, 195); }
+}
