@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { clamp, lerp } from './utils'
+import { clamp, lerp } from '../utils/utils'
 
 interface BallAnimationProps {
   tValue: number

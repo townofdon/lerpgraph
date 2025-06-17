@@ -10,3 +10,5 @@ export function inverseLerp(a: number, b: number, v: number) {
 export function clamp(v: number, min: number, max: number) {
   return Math.max(Math.min(v, max), min)
 }
+
+export function expDecay() {}

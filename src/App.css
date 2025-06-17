@@ -1,4 +1,5 @@
 main {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -8,8 +9,24 @@ main {
   flex: 0;
 }
 
+main > .container {
+  width: 1200px;
+
+  &.slideshow {
+    min-height: 600px;
+  }
+}
+
 .input-container {
   margin-bottom: 5px;
+}
+
+.accent {
+  color: hotpink;
+}
+
+.accent2 {
+  color: cyan
 }
 
 canvas {
@@ -47,8 +64,12 @@ pre code {
   font-size: 16px;
   color: #9eaeb3;
 
+  &.large { font-size: 2.5em; }
+
   .keyword { color: rgb(108, 158, 220); }
-  .var { color: rgb(0, 255, 229); }
-  .number { color: #becfd4; }
-  .function { color: rgb(115, 175, 195); }
+  .var, .variable { color: rgb(0, 255, 229); }
+  .number, .value { color: #becfd4; }
+  .function, .func { color: rgb(115, 175, 195); }
+  .alt1 { color: rgb(175, 115, 195); }
+  .alt2 { color: rgb(115, 195, 122); }
 }

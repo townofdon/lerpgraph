@@ -1,4 +1,4 @@
-import type { GraphData, Vector } from './types'
+import type { GraphData, Vector } from '../types'
 import { clamp, lerp } from './utils'
 
 export function compute(

@@ -13,3 +13,8 @@ export interface GraphData {
    */
   tKnee: number
 }
+
+export interface SlideProps {
+  slideIndex: number
+  lastSlide ?: boolean
+}

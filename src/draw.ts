@@ -1,5 +1,5 @@
 import type { GraphData, Vector } from './types'
-import { clamp, inverseLerp, lerp } from './utils'
+import { clamp, inverseLerp, lerp } from './utils/utils'
 
 const PADDING = 60
 const EPSILON = 0.0001
