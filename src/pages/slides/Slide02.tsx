@@ -5,8 +5,8 @@ import type { SlideProps } from '../../types'
 
 export const Slide02 = (props: SlideProps) => {
   return (
-    <SlideShowContainer {...props}>
-      <h1 style={{ marginTop: 80 }}>
+    <SlideShowContainer {...props} gap={15}>
+      <h1 style={{ marginTop: 90 }}>
         <span className="accent">L</span>inear Int
         <span className="accent">erp</span>olation {/* prettier-ignore */}
         <small>
