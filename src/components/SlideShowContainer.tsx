@@ -1,5 +1,5 @@
 import { Link } from 'react-router'
-import { Stack } from './Stack'
+import { Stack, type StackProps } from './Stack'
 
 import type { SlideProps } from '../types'
 import { useSlideKeyboardNavigation } from '../hooks/useSlideKeyboardNavigation'
@@ -9,6 +9,7 @@ import '../App.css'
 interface SlideShowContainerProps extends SlideProps {
   slideIndex: number
   children?: React.ReactNode | React.ReactNode[]
+  align?: StackProps['align']
 }
 
 export const SlideShowContainer = ({

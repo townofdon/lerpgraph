@@ -3,27 +3,10 @@ import { SlideShowContainer } from '../../components/SlideShowContainer'
 import { Stack } from '../../components/Stack'
 import type { SlideProps } from '../../types'
 
-export const Slide02 = (props: SlideProps) => {
+export const Slide02b = (props: SlideProps) => {
   return (
     <SlideShowContainer {...props}>
-      <h1>
-        <span className="accent">L</span>inear Int
-        <span className="accent">erp</span>olation {/* prettier-ignore */}
-        <small>
-          <small>
-            (<a href="https://en.wikipedia.org/wiki/Linear_interpolation" target="_blank" >wikipedia</a>)
-          </small>
-        </small>
-      </h1>
-
-      <p style={{ fontSize: 20 }}>
-        <em>
-          Method for blending from <strong className="accent2">A</strong> to{' '}
-          <strong className="accent">B</strong>.
-        </em>
-      </p>
-
-      <Stack direction="column" align="center">
+      <Stack direction="column" align="center" style={{ marginTop: 60 }}>
         <h3>Formula</h3>
         <div className="equation-container">
           <pre>
@@ -41,6 +24,11 @@ export const Slide02 = (props: SlideProps) => {
             <li><code><Code alt1>t</Code></code> = number between [0,1]</li>
             <li><code><Code value>v</Code></code> = result</li>
           </ul>
+        </div>
+        <div style={{ fontSize: 24 }}>
+          <p>At <code><Code alt1>t</Code> = 0</code>, the value will be <code><Code variable>a</Code></code></p>
+          <p>At <code><Code alt1>t</Code> = 1</code>, the value will be <code><Code alt2>b</Code></code></p>
+          <p>At <code><Code alt1>t</Code> = 0.5</code>, the value will be halfway between <code><Code variable>a</Code></code> and <code><Code alt2>b</Code></code></p>
         </div>
       </Stack>
     </SlideShowContainer>

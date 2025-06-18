@@ -29,6 +29,14 @@ main > .container {
   color: cyan
 }
 
+.accent3 {
+  color: rgb(245, 243, 112)
+}
+
+.pad-top, .pad-top-m {
+  padding-top: 30px;
+}
+
 canvas {
   margin-top: 30px;
   background-color: #303030;
@@ -60,9 +68,19 @@ canvas {
   padding-top: 30px;
 }
 
+.equation-container {
+  background: #111;
+  border: 3px solid #222;
+  border-radius:12px;
+  padding: 12px 24px;
+}
+
 pre code {
   font-size: 16px;
   color: #9eaeb3;
+}
+
+code {
 
   &.large { font-size: 2.5em; }
 
