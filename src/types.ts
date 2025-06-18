@@ -16,5 +16,13 @@ export interface GraphData {
 
 export interface SlideProps {
   slideIndex: number
-  lastSlide ?: boolean
+  lastSlide?: boolean
 }
+
+export type Easing =
+  | 'in-cubic'
+  | 'out-cubic'
+  | 'in-out-cubic'
+  | 'in-quad'
+  | 'out-quad'
+  | 'in-out-quad'

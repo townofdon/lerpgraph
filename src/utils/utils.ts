@@ -11,4 +11,6 @@ export function clamp(v: number, min: number, max: number) {
   return Math.max(Math.min(v, max), min)
 }
 
-export function expDecay() {}
+export function expDecay(a: number, b: number, decay: number, deltaTime: number) {
+  return b + (a - b) * Math.exp(-decay * deltaTime)
+}

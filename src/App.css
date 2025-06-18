@@ -26,11 +26,19 @@ main > .container {
 }
 
 .accent2 {
-  color: cyan
+  color: cyan;
 }
 
 .accent3 {
-  color: rgb(245, 243, 112)
+  color: rgb(245, 243, 112);
+}
+
+.accent4 {
+  color: rgb(21, 151, 255);
+}
+
+.accent5 {
+  color: rgb(227, 76, 111);
 }
 
 .pad-top, .pad-top-m {
@@ -77,10 +85,10 @@ canvas {
 
 pre code {
   font-size: 16px;
-  color: #9eaeb3;
 }
 
 code {
+  color: #9eaeb3;
 
   &.large { font-size: 2.5em; }
 
@@ -90,4 +98,6 @@ code {
   .function, .func { color: rgb(115, 175, 195); }
   .alt1 { color: rgb(175, 115, 195); }
   .alt2 { color: rgb(115, 195, 122); }
+  .alt3 { color: rgb(195, 115, 115); }
+  .alt4 { color: rgb(64, 97, 187); }
 }

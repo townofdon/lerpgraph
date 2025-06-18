@@ -5,7 +5,6 @@ interface InputProps {
   initialValue: number
   setValue: (val: number) => void
   slider?: boolean
-  exp?: boolean
   min?: number
   max?: number
   step?: number

@@ -6,7 +6,7 @@ import type { SlideProps } from '../../types'
 export const Slide02 = (props: SlideProps) => {
   return (
     <SlideShowContainer {...props}>
-      <h1>
+      <h1 style={{ marginTop: 80 }}>
         <span className="accent">L</span>inear Int
         <span className="accent">erp</span>olation {/* prettier-ignore */}
         <small>
@@ -29,7 +29,7 @@ export const Slide02 = (props: SlideProps) => {
           <pre>
             <code className="large">
               <Code value>v</Code> = <Code variable>a</Code> <Code func>*</Code>{' '}
-              (<Code alt1>t</Code> - 1) <Code func>+</Code> <Code alt2>b</Code>{' '}
+              (<Code alt1>t</Code> - 1) <Code func>+</Code> <Code alt3>b</Code>{' '}
               <Code func>*</Code> <Code alt1>t</Code>
             </code>
           </pre>
@@ -37,7 +37,7 @@ export const Slide02 = (props: SlideProps) => {
         <div>
           <ul style={{ fontSize: 24 }}>
             <li><code><Code variable>a</Code></code> = some value A</li>
-            <li><code><Code alt2>b</Code></code> = some value B</li>
+            <li><code><Code alt3>b</Code></code> = some value B</li>
             <li><code><Code alt1>t</Code></code> = number between [0,1]</li>
             <li><code><Code value>v</Code></code> = result</li>
           </ul>

@@ -1,3 +1,5 @@
+import '../App.css'
+
 interface CodeProps {
   children?: React.ReactNode
   keyword?: boolean
@@ -6,6 +8,7 @@ interface CodeProps {
   func?: boolean
   alt1?: boolean
   alt2?: boolean
+  alt3?: boolean
 }
 
 export const Code = ({
@@ -16,6 +19,7 @@ export const Code = ({
   func,
   alt1,
   alt2,
+  alt3,
 }: CodeProps) => {
   const className = (() => {
     if (keyword) return 'keyword'
@@ -25,6 +29,7 @@ export const Code = ({
     if (func) return 'function'
     if (alt1) return 'alt1'
     if (alt2) return 'alt2'
+    if (alt3) return 'alt3'
     return ''
   })()
   return (

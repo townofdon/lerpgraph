@@ -10,17 +10,21 @@ interface SlideShowContainerProps extends SlideProps {
   slideIndex: number
   children?: React.ReactNode | React.ReactNode[]
   align?: StackProps['align']
+  gap?:number
+  refMain?: React.RefObject<HTMLElement | null>
 }
 
 export const SlideShowContainer = ({
   children,
   slideIndex,
   lastSlide,
+  gap = 60,
+  refMain,
 }: SlideShowContainerProps) => {
   useSlideKeyboardNavigation(slideIndex)
 
   return (
-    <main>
+    <main ref={refMain}>
       <Stack
         direction="row"
         align="center"
@@ -39,7 +43,7 @@ export const SlideShowContainer = ({
         direction="column"
         align="center"
         justify="center"
-        gap={30}
+        gap={gap}
         className="container slideshow"
       >
         {children}
