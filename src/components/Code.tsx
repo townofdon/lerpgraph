@@ -9,6 +9,7 @@ interface CodeProps {
   alt1?: boolean
   alt2?: boolean
   alt3?: boolean
+  alt4?: boolean
 }
 
 export const Code = ({
@@ -20,6 +21,7 @@ export const Code = ({
   alt1,
   alt2,
   alt3,
+  alt4,
 }: CodeProps) => {
   const className = (() => {
     if (keyword) return 'keyword'
@@ -30,6 +32,7 @@ export const Code = ({
     if (alt1) return 'alt1'
     if (alt2) return 'alt2'
     if (alt3) return 'alt3'
+    if (alt4) return 'alt4'
     return ''
   })()
   return (

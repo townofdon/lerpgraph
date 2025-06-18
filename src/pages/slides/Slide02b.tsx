@@ -11,24 +11,24 @@ export const Slide02b = (props: SlideProps) => {
         <div className="equation-container">
           <pre>
             <code className="large">
-              <Code value>v</Code> = <Code variable>a</Code> <Code func>*</Code>{' '}
+              <Code value>v</Code> = <Code alt4>a</Code> <Code func>*</Code>{' '}
               (<Code alt1>t</Code> - 1) <Code func>+</Code> <Code alt3>b</Code>{' '}
               <Code func>*</Code> <Code alt1>t</Code>
             </code>
           </pre>
         </div>
-        <div>
+        {/* <div>
           <ul style={{ fontSize: 24 }}>
-            <li><code><Code variable>a</Code></code> = some value A</li>
+            <li><code><Code alt4>a</Code></code> = some value A</li>
             <li><code><Code alt3>b</Code></code> = some value B</li>
             <li><code><Code alt1>t</Code></code> = number between [0,1]</li>
             <li><code><Code value>v</Code></code> = result</li>
           </ul>
-        </div>
-        <div style={{ fontSize: 24 }}>
-          <p>At <code><Code alt1>t</Code> = 0</code>, the value will be <code><Code variable>a</Code></code></p>
+        </div> */}
+        <div style={{ fontSize: 24, marginTop: 60, marginLeft: 80 }}>
+          <p>At <code><Code alt1>t</Code> = 0</code>, the value will be <code><Code alt4>a</Code></code></p>
           <p>At <code><Code alt1>t</Code> = 1</code>, the value will be <code><Code alt3>b</Code></code></p>
-          <p>At <code><Code alt1>t</Code> = 0.5</code>, the value will be halfway between <code><Code variable>a</Code></code> and <code><Code alt3>b</Code></code></p>
+          <p>At <code><Code alt1>t</Code> = 0.5</code>, the value will be halfway between <code><Code alt4>a</Code></code> and <code><Code alt3>b</Code></code></p>
         </div>
       </Stack>
     </SlideShowContainer>

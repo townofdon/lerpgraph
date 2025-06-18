@@ -7,6 +7,7 @@ import { Slide01 } from './pages/slides/Slide01'
 import { Slide01b } from './pages/slides/Slide01b'
 import { Slide02 } from './pages/slides/Slide02'
 import { Slide02b } from './pages/slides/Slide02b'
+import { Slide02c } from './pages/slides/Slide02c'
 import { Slide03 } from './pages/slides/Slide03'
 import { Slide03b } from './pages/slides/Slide03b'
 import { Slide04 } from './pages/slides/Slide04'
@@ -31,6 +32,7 @@ const slides = [
   Slide01b,
   Slide02,
   Slide02b,
+  Slide02c,
   Slide03,
   Slide03b,
   Slide04,
