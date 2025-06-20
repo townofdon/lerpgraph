@@ -7,6 +7,7 @@ const EPSILON = 0.0001
 const colors: Record<string, React.CSSProperties['color']> = {
   bg: '#111109',
   plot: 'aqua',
+  plotExp: 'rgb(245, 243, 112)',
   axisMajor: '#555',
   axisMinor: '#292918',
   axisTick: '#151412',
@@ -17,7 +18,8 @@ const colors: Record<string, React.CSSProperties['color']> = {
 
 export const drawLerpCurve = (
   canvas: HTMLCanvasElement | null,
-  data: GraphData,
+  lerpData: GraphData,
+  expData: GraphData,
   mouse: Vector,
 ) => {
   if (!canvas) return
@@ -100,45 +102,45 @@ export const drawLerpCurve = (
   function drawVerticalAxes() {
     let t = 0
     let minXNextLabel = -1
-    while (t <= data.domain + EPSILON) {
+    while (t <= lerpData.domain + EPSILON) {
       const major = Math.round(t * 10) % 10 < EPSILON
       const minor = Math.round(t * 10) % 5 < EPSILON
       if (major) {
-        verticalLine(t / data.domain, colors.axisMajor)
+        verticalLine(t / lerpData.domain, colors.axisMajor)
         if (t) {
-          minXNextLabel = label(t.toFixed(0), t / data.domain, 0, "top", 'whitesmoke', minXNextLabel)
+          minXNextLabel = label(t.toFixed(0), t / lerpData.domain, 0, "top", 'whitesmoke', minXNextLabel)
         }
       } else if (minor) {
-        verticalLine(t / data.domain, colors.axisMinor)
-        if (t && data.domain < 13) {
-          minXNextLabel = label(t.toFixed(1), t / data.domain, 0, "top", 'whitesmoke', minXNextLabel)
+        verticalLine(t / lerpData.domain, colors.axisMinor)
+        if (t && lerpData.domain < 13) {
+          minXNextLabel = label(t.toFixed(1), t / lerpData.domain, 0, "top", 'whitesmoke', minXNextLabel)
         }
       } else {
-        if (data.domain < 8) {
-          verticalLine(t / data.domain, colors.axisTick)
+        if (lerpData.domain < 8) {
+          verticalLine(t / lerpData.domain, colors.axisTick)
         }
       }
       t += 0.1
     }
-    if (data.tKnee > 0 && data.tKnee < data.domain) {
-      verticalLine(data.tKnee / data.domain, 'green')
-      label(data.tKnee.toFixed(2), data.tKnee / data.domain, 1, "bottom", 'green')
+    if (lerpData.tKnee > 0 && lerpData.tKnee < lerpData.domain) {
+      verticalLine(lerpData.tKnee / lerpData.domain, 'green')
+      label(lerpData.tKnee.toFixed(2), lerpData.tKnee / lerpData.domain, 1, "bottom", 'green')
     }
   }
   drawVerticalAxes()
 
   function drawHorizontalAxes() {
     let minXNextLabel = -1
-    let y = Math.ceil(data.min)
-    while (y <= data.max) {
-      horizontalLine(inverseLerp(data.min, data.max, y), colors.axisMajor)
-      minXNextLabel = label(String(y), 0, inverseLerp(data.min, data.max, y), "right", 'whitesmoke', minXNextLabel)
+    let y = Math.ceil(lerpData.min)
+    while (y <= lerpData.max) {
+      horizontalLine(inverseLerp(lerpData.min, lerpData.max, y), colors.axisMajor)
+      minXNextLabel = label(String(y), 0, inverseLerp(lerpData.min, lerpData.max, y), "right", 'whitesmoke', minXNextLabel)
       y++
     }
     horizontalLine(1, colors.upperBound)
     horizontalLine(0, colors.lowerBound)
-    if (data.max !== 1) label(String(data.max), 0, 1, "right", colors.upperBound)
-    if (data.min !== 0) label(String(data.min), 0, 0, "right", colors.lowerBound)
+    if (lerpData.max !== 1) label(String(lerpData.max), 0, 1, "right", colors.upperBound)
+    if (lerpData.min !== 0) label(String(lerpData.min), 0, 0, "right", colors.lowerBound)
   }
   drawHorizontalAxes()
 
@@ -149,40 +151,36 @@ export const drawLerpCurve = (
     if (x < 0 || x > 1 || y < 0 || y > 1) return
     horizontalLine(y, colors.mouse)
     verticalLine(x, colors.mouse)
-    const vx = x * data.domain
-    const vy = lerp(data.min, data.max, y)
+    const vx = x * lerpData.domain
+    const vy = lerp(lerpData.min, lerpData.max, y)
     label(vx.toFixed(2), x, 1, "bottom", colors.mouse)
     label(vy.toFixed(2), 1, y, "left", colors.mouse)
   }
   drawMouseLines()
 
-  function plotLine(a: Vector, b: Vector) {
-    const ayScaled = inverseLerp(data.min, data.max, a.y)
-    const byScaled = inverseLerp(data.min, data.max, b.y)
+  function plotLine(a: Vector, b: Vector, color: React.CSSProperties['color']) {
+    const ayScaled = inverseLerp(lerpData.min, lerpData.max, a.y)
+    const byScaled = inverseLerp(lerpData.min, lerpData.max, b.y)
     renderer.drawLine(
-      normX(a.x / data.domain),
+      normX(a.x / lerpData.domain),
       normY(ayScaled),
-      normX(b.x / data.domain),
+      normX(b.x / lerpData.domain),
       normY(byScaled),
-      colors.plot,
+      color,
     )
   }
 
-  for (let i = 1; i < data.points.length; i++) {
-    const prev = data.points[i - 1]
-    const point = data.points[i]
-    plotLine(prev, point)
+  for (let i = 1; i < expData.points.length; i++) {
+    const prev = expData.points[i - 1]
+    const point = expData.points[i]
+    plotLine(prev, point, colors.plotExp)
   }
 
-  // verticalLine(0, "green")
-  // verticalLine(0.3, "green")
-  // verticalLine(0.7, "magenta")
-  // horizontalLine(0.5, "blueviolet")
-
-  // renderer.drawRect(10, 10, 50, 50, 'rgb(200 0 0)')
-  // renderer.drawRect(30, 30, 50 + boost, 50 + boost, 'rgb(0 0 200 / 50%)')
-  // renderer.drawLine(10, 10, 50 + boost, 10 + boost, 'aquamarine', 2)
-  // renderer.text("boost", 50 + boost, 10 + boost, 'aquamarine')
+  for (let i = 1; i < lerpData.points.length; i++) {
+    const prev = lerpData.points[i - 1]
+    const point = lerpData.points[i]
+    plotLine(prev, point, colors.plot)
+  }
 }
 
 class Renderer {

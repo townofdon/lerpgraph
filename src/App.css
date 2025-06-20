@@ -96,8 +96,10 @@ code {
   .var, .variable { color: rgb(0, 255, 229); }
   .number, .value { color: #becfd4; }
   .function, .func { color: rgb(115, 175, 195); }
+  .comment { color: #676f7a; }
   .alt1 { color: rgb(175, 115, 195); }
   .alt2 { color: rgb(115, 195, 122); }
   .alt3 { color: rgb(195, 115, 115); }
   .alt4 { color: rgb(64, 97, 187); }
+  .alt5 { color: rgb(245, 243, 112); }
 }

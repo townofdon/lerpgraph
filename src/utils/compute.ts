@@ -1,7 +1,7 @@
 import type { GraphData, Vector } from '../types'
-import { clamp, lerp } from './utils'
+import { clamp, expDecay, lerp } from './utils'
 
-export function compute(
+export function computeLerp(
   initialValue: number,
   targetValue: number,
   tValue: number,
@@ -20,7 +20,49 @@ export function compute(
     t += step
   }
 
-  // find the knee of the curve
+  const tKnee = findCurveKnee(points)
+
+  return {
+    points,
+    max: vMax,
+    min: vMin,
+    tKnee,
+    domain,
+  } satisfies GraphData
+}
+
+export function computeExpDecayData(
+  initialValue: number,
+  targetValue: number,
+  decay: number, // decay constant
+  domain: number,
+): GraphData {
+  const points: Vector[] = []
+  const vMin = Math.min(0, initialValue, targetValue)
+  const vMax = Math.max(1, initialValue, targetValue)
+  const step = 1 / 60
+  let t = 0
+  let result = initialValue
+
+  while (t <= domain) {
+    points.push({ x: t, y: result })
+    result = expDecay(result, targetValue, decay, step)
+    t += step
+  }
+
+  const tKnee = findCurveKnee(points)
+
+  return {
+    points,
+    max: vMax,
+    min: vMin,
+    tKnee,
+    domain,
+  } satisfies GraphData
+}
+
+// find the knee of the curve
+function findCurveKnee(points: Vector[]) {
   let vKnee = 0
   let tKnee = Infinity
   for (let sample = 2; sample < 150 && sample < points.length - 3; sample += 3) {
@@ -41,12 +83,5 @@ export function compute(
       if (t > 2) break
     }
   }
-
-  return {
-    points,
-    max: vMax,
-    min: vMin,
-    tKnee,
-    domain,
-  } satisfies GraphData
+  return tKnee
 }

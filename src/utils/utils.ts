@@ -14,3 +14,12 @@ export function clamp(v: number, min: number, max: number) {
 export function expDecay(a: number, b: number, decay: number, deltaTime: number) {
   return b + (a - b) * Math.exp(-decay * deltaTime)
 }
+
+export function getDecayConstantFromLerpWeight(t: number, fps: number) {
+  return -fps * Math.log(1 - t)
+}
+
+export function getLerpWeightFromDecayConstant(decay: number, fps: number) {
+  if (decay === Infinity) return 1
+  return 1 - Math.exp(-decay / fps)
+}
