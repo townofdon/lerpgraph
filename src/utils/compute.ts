@@ -1,4 +1,5 @@
 import type { GraphData, Vector } from '../types'
+import { findCurveKnee } from './findCurveKnee'
 import { clamp, expDecay, lerp } from './utils'
 
 export function computeLerp(
@@ -61,27 +62,63 @@ export function computeExpDecayData(
   } satisfies GraphData
 }
 
-// find the knee of the curve
-function findCurveKnee(points: Vector[]) {
-  let vKnee = 0
-  let tKnee = Infinity
-  for (let sample = 2; sample < 150 && sample < points.length - 3; sample += 3) {
-    for (let i = sample; i < points.length - sample; i++) {
-      const tPrev = points[i-sample].x
-      const t = points[i].x
-      const tNext = points[i+sample].x
-      const prev = points[i-sample].y
-      const cur = points[i].y
-      const next = points[i+sample].y
-      const slopePrev = Math.abs(cur - prev) / (t - tPrev)
-      const slopeNext = Math.abs(next - cur) / (tNext - t)
-      const slopeDiff = Math.abs(slopeNext - slopePrev)
-      if (slopeDiff > vKnee) {
-        vKnee = slopeDiff
-        tKnee = t
-      }
-      if (t > 2) break
+interface IntegrationSolver {
+  compute: (delta: number, input: number) => number
+}
+
+interface ComputeDampedSpringEulerArgs {
+  domain: number
+  variadicInput?: boolean
+  solver: IntegrationSolver
+}
+export function computeSolverCurve({
+  domain,
+  variadicInput,
+  solver, 
+}: ComputeDampedSpringEulerArgs) {
+  const points: Vector[] = []
+  const inputs: Vector[] = []
+  let vMin = 0
+  let vMax = 1
+  let tMin = 0
+  let tMax = 0
+  const step = 1 / 60
+  let t = 0
+  let result = 0
+
+  t = 0
+  while (t <= domain) {
+    const target = variadicInput ? getVariadicInputByTime(t) : 1
+    points.push({ x: t, y: result })
+    inputs.push({ x: t, y: target })
+    result = solver.compute(step, target)
+    if (result < vMin) {
+      vMin = result
+      tMin = t
     }
+    if (result > vMax) {
+      vMax = result
+      tMax = t
+    }
+    t += step
   }
-  return tKnee
+
+  return {
+    points,
+    inputs,
+    max: vMax,
+    min: vMin,
+    tMin,
+    tMax,
+    domain,
+  } satisfies GraphData
+}
+
+function getVariadicInputByTime(t: number) {
+  if (t < 1) return 0
+  if (t < 2.5) return 1
+  if (t < 3.5) return -1
+  if (t < 4.5) return lerp(-1, 0.5, t - 3.5)
+  if (t < 5) return lerp(0.5, 0, (t - 4.5) * 2)
+  return 0
 }

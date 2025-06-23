@@ -10,6 +10,7 @@ interface InputProps {
   max?: number
   step?: number
   copiable?: boolean
+  reset?: number
 }
 export const Input = ({
   label,
@@ -20,6 +21,7 @@ export const Input = ({
   max = 1,
   step = 0.1,
   copiable = false,
+  reset,
 }: InputProps) => {
   const inputRef = useRef<HTMLInputElement>(null)
   const [internal, setInternal] = useState(String(value))
@@ -84,6 +86,11 @@ export const Input = ({
         {copiable && (
           <div style={{ position: 'absolute', left: '100%', top: 0, marginLeft: 5, marginTop: -5 }}>
             <CopyToClipboard inputRef={inputRef} />
+          </div>
+        )}
+        {reset !== undefined && value !== reset && (
+          <div style={{ position: 'absolute', right: '100%', top: -3, marginRight: 8 }}>
+            <button className='undo' onClick={() => setValue(reset)}>↪️</button>
           </div>
         )}
       </label>

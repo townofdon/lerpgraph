@@ -23,3 +23,11 @@ export function getLerpWeightFromDecayConstant(decay: number, fps: number) {
   if (decay === Infinity) return 1
   return 1 - Math.exp(-decay / fps)
 }
+
+export function round(num: number, digits = 4) {
+  let mul = 1
+  for (let i = 0; i < digits; i++) {
+    mul *= 10
+  }
+  return Math.round(num * mul) / mul;
+}

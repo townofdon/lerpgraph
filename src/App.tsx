@@ -3,6 +3,7 @@ import { Route, Routes } from 'react-router'
 
 import { useSlideEvents } from './hooks/useSlideEvents'
 import { HomePage } from './pages/HomePage'
+import { DampedSpringSolversPage } from './pages/DampedSpringSolversPage'
 import { Page404 } from './pages/404Page'
 import { Slide01 } from './pages/slides/Slide01'
 import { Slide01b } from './pages/slides/Slide01b'
@@ -62,6 +63,7 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<HomePage />} />
+      <Route path="/damped-spring-solvers" element={<DampedSpringSolversPage />} />
       {slides.map((Slide, index) => (
         <Route
           path={`/slide-${index + 1}`}

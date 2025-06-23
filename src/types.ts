@@ -20,13 +20,16 @@ export function isVector(arg: unknown): arg is Vector {
 
 export interface GraphData {
   points: Vector[]
+  inputs?: Vector[]
   min: number
   max: number
+  tMin?: number
+  tMax?: number
   domain: number
   /**
    * The estimated time where the curve has |slope| of 0.5
    */
-  tKnee: number
+  tKnee?: number
 }
 
 export interface SlideProps {

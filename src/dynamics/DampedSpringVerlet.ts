@@ -1,47 +1,44 @@
-import { isVector, type SolverType } from '../types'
-import { add, mul, sub } from './ops'
 import { calculateSolverConstants, type SolverConstantArgs, type SolverConstants, type SolverOptions } from './solverConstants'
 
 
-interface BaseDampedSpringVerletArgs<T extends SolverType> {
-  initialValue: T
+interface BaseDampedSpringVerletArgs {
+  initialValue: number
 }
 
-export type DampedSpringVerletArgs<T extends SolverType> =
-  SolverConstantArgs & SolverOptions & BaseDampedSpringVerletArgs<T>
+export type DampedSpringVerletArgs =
+  SolverConstantArgs & SolverOptions & BaseDampedSpringVerletArgs
 
 /**
  * Given an input x, calculate an output y using a damped spring system.
  * Solve using Verlet Integration (specifically, the Velocity Verlet algorithm): https://en.wikipedia.org/wiki/Verlet_integration
  */
-export class DampedSpringVerlet<T extends SolverType> {
+export class DampedSpringVerlet {
   private constants!: SolverConstants
   private options!: SolverOptions
 
-  private xp!: T // previous input
-  private y!: T // output
-  private v!: T // "velocity", or first derivative of output
-  private a!: T // "acceleration", or second derivative of output
+  private xp!: number // previous input
+  private y!: number // output
+  private v!: number // "velocity", or first derivative of output
+  private a!: number // "acceleration", or second derivative of output
 
-  public DampedSpringVerlet(args: DampedSpringVerletArgs<T>) {
+  public constructor(args: DampedSpringVerletArgs) {
     this.constants = calculateSolverConstants(args)
     this.options = args
     this.y = args.initialValue
 
-    if (isVector(args.initialValue)) {
-      this.xp = { x: 0, y: 0 } as T
-      this.v = { x: 0, y: 0 } as T
-    }
+    this.xp = 0
+    this.v = 0
+    this.a = 0
   }
 
   /**
    * @param delta time since last frame (in seconds)
    * @param x input
    */
-  public compute(
+  public compute = (
     delta: number,
-    x: T,
-  ): T {
+    x: number,
+  ): number => {
     const { y, v, a, xp } = this
     if (delta <= 0) {
       return this.y
@@ -66,19 +63,12 @@ export class DampedSpringVerlet<T extends SolverType> {
       k2_stable = T * t2
     }
     // estimate change of input
-    // xd = (x - xp) / T
-    const xd = mul(sub(x, xp), (1 / T))
+    const xd = (x - xp) / T
     this.xp = x
     // // see: https://en.wikipedia.org/wiki/Verlet_integration#Algorithmic_representation
-    // y_new = y + yd*T + a*(dt*dt*0.5)
-    // a_new = (x + k3*xd - y - k1*yd) / k2
-    // yd_new = yd + (acc + a_new)*(dt*0.5)
-    // y = y_new
-    // a = a_new
-    // yd = yd_new
-    const y_new = add(y, add(mul(v, T), mul(a, T*T*0.5)))
-    const a_new = mul(add(x, sub(mul(xd,k3), sub(y, mul(v, k1_stable)))), (1 / k2_stable))
-    const v_new = add(v, mul(add(a, a_new), T*0.5))
+    const y_new = y + v*T + a*(T*T*0.5)
+    const a_new = (x + k3*xd - y - k1_stable*v) / k2_stable
+    const v_new = v + (a + a_new)*(T*0.5)
     this.y = y_new
     this.a = a_new
     this.v = v_new

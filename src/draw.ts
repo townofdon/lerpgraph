@@ -1,5 +1,5 @@
 import type { GraphData, Vector } from './types'
-import { clamp, inverseLerp, lerp } from './utils/utils'
+import { clamp, inverseLerp, lerp, round } from './utils/utils'
 
 const PADDING = 60
 const EPSILON = 0.0001
@@ -14,12 +14,13 @@ const colors: Record<string, React.CSSProperties['color']> = {
   lowerBound: 'magenta',
   upperBound: 'darkgreen',
   mouse: 'darkcyan',
+  input: 'darkmagenta',
 }
 
 export const drawLerpCurve = (
   canvas: HTMLCanvasElement | null,
   lerpData: GraphData,
-  expData: GraphData,
+  expData: GraphData | undefined,
   mouse: Vector,
 ) => {
   if (!canvas) return
@@ -122,7 +123,7 @@ export const drawLerpCurve = (
       }
       t += 0.1
     }
-    if (lerpData.tKnee > 0 && lerpData.tKnee < lerpData.domain) {
+    if (lerpData.tKnee && lerpData.tKnee > 0 && lerpData.tKnee < lerpData.domain) {
       verticalLine(lerpData.tKnee / lerpData.domain, 'green')
       label(lerpData.tKnee.toFixed(2), lerpData.tKnee / lerpData.domain, 1, "bottom", 'green')
     }
@@ -135,12 +136,13 @@ export const drawLerpCurve = (
     while (y <= lerpData.max) {
       horizontalLine(inverseLerp(lerpData.min, lerpData.max, y), colors.axisMajor)
       minXNextLabel = label(String(y), 0, inverseLerp(lerpData.min, lerpData.max, y), "right", 'whitesmoke', minXNextLabel)
-      y++
+      const step = Math.max(1, Math.ceil(lerpData.max / 20))
+      y += step
     }
     horizontalLine(1, colors.upperBound)
     horizontalLine(0, colors.lowerBound)
-    if (lerpData.max !== 1) label(String(lerpData.max), 0, 1, "right", colors.upperBound)
-    if (lerpData.min !== 0) label(String(lerpData.min), 0, 0, "right", colors.lowerBound)
+    if (lerpData.max !== 1) label(String(round(lerpData.max)), 0, 1, "right", colors.upperBound)
+    if (lerpData.min !== 0) label(String(round(lerpData.min)), 0, 0, "right", colors.lowerBound)
   }
   drawHorizontalAxes()
 
@@ -170,10 +172,20 @@ export const drawLerpCurve = (
     )
   }
 
-  for (let i = 1; i < expData.points.length; i++) {
-    const prev = expData.points[i - 1]
-    const point = expData.points[i]
-    plotLine(prev, point, colors.plotExp)
+  if (lerpData.inputs) {
+    for (let i = 1; i < lerpData.inputs.length; i++) {
+      const prev = lerpData.inputs[i - 1]
+      const point = lerpData.inputs[i]
+      plotLine(prev, point, colors.input)
+    }
+  }
+
+  if (expData) {
+    for (let i = 1; i < expData.points.length; i++) {
+      const prev = expData.points[i - 1]
+      const point = expData.points[i]
+      plotLine(prev, point, colors.plotExp)
+    }
   }
 
   for (let i = 1; i < lerpData.points.length; i++) {

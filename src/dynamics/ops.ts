@@ -10,7 +10,7 @@ export function add<T extends SolverType>(a: T, b: T): T {
     const vec = { x, y } satisfies Vector satisfies SolverType
     return vec as T
   }
-  throw new Error(`unsupported type: a<${typeof a}>, b<${typeof b}>`)
+  throw new Error(`unsupported type for add: a<${typeof a}>, b<${typeof b}>`)
 }
 
 export function sub<T extends SolverType>(a: T, b: T): T {
@@ -23,7 +23,7 @@ export function sub<T extends SolverType>(a: T, b: T): T {
     const vec = { x, y } satisfies Vector satisfies SolverType
     return vec as T
   }
-  throw new Error(`unsupported type: a<${typeof a}>, b<${typeof b}>`)
+  throw new Error(`unsupported type for sub: a<${typeof a}>, b<${typeof b}>`)
 }
 
 export function mul<T extends SolverType>(a: T, b: number): T {
@@ -36,5 +36,5 @@ export function mul<T extends SolverType>(a: T, b: number): T {
     const vec = { x, y } satisfies Vector satisfies SolverType
     return vec as T
   }
-  throw new Error(`unsupported type: a<${typeof a}>, b<${typeof b}>`)
+  throw new Error(`unsupported type for mul: a<${typeof a}>, b<${typeof b}>`)
 }

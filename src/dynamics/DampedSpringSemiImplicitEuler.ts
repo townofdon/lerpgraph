@@ -1,41 +1,37 @@
-import { isVector, type SolverType } from '../types'
-import { add, mul, sub } from './ops'
 import { calculateSolverConstants, type SolverConstantArgs, type SolverConstants, type SolverOptions } from './solverConstants'
 
-interface BaseDampedSpringEulerArgs<T extends SolverType> {
-  initialValue: T
+interface BaseDampedSpringEulerArgs {
+  initialValue: number
 }
 
-export type DampedSpringEulerArgs<T extends SolverType> =
-  SolverConstantArgs & SolverOptions & BaseDampedSpringEulerArgs<T>
+export type DampedSpringEulerArgs =
+  SolverConstantArgs & SolverOptions & BaseDampedSpringEulerArgs
 
 /**
  * Given an input x, calculate an output y using a damped spring system.
  * Solve using the semi-implicit Euler Method: https://en.wikipedia.org/wiki/Semi-implicit_Euler_method
  */
-export class DampedSpringEuler<T extends SolverType> {
+export class DampedSpringSemiImplicitEuler {
   private constants!: SolverConstants
   private options!: SolverOptions
 
-  private xp!: T // previous input
-  private y!: T // output
-  private yd!: T // change in output (e.g. velocity, if input is a position vector)
+  private xp!: number // previous input
+  private y!: number // output
+  private yd!: number // change in output (e.g. velocity, if input is a position vector)
 
-  public DampedSpringEuler(args: DampedSpringEulerArgs<T>) {
+  public constructor(args: DampedSpringEulerArgs) {
     this.constants = calculateSolverConstants(args)
     this.options = args
     this.y = args.initialValue
 
-    if (isVector(args.initialValue)) {
-      this.xp = { x: 0, y: 0 } as T
-      this.yd = { x: 0, y: 0 } as T
-    }
+    this.xp = 0
+    this.yd = 0
   }
 
-  public compute(
+  public compute = (
     delta: number,
-    x: T,
-  ): T {
+    x: number,
+  ): number => {
     const { y, yd, xp } = this
     if (delta <= 0) {
       return this.y
@@ -44,8 +40,7 @@ export class DampedSpringEuler<T extends SolverType> {
     const T:number = delta
     const { k1, k2, k3, _w, _z, _d } = this.constants
     // estimate change of input
-    // xd = (x - xp) / T
-    const xd = mul(sub(x, xp), (1 / T))
+    const xd = (x - xp) / T
     this.xp = x
     // clamp k2 to guarantee stability without jitter
     let k1_stable:number = k1
@@ -63,10 +58,8 @@ export class DampedSpringEuler<T extends SolverType> {
       k1_stable = (1 - beta) * t2
       k2_stable = T * t2
     }
-    // y = y + T*yd
-    this.y = add(y, mul(yd, T))
-    // yd = yd + T * (x + k3*xd - y - k1_stable*yd) / k2_stable
-    this.yd = add(yd, mul(add(x, sub(mul(xd,k3), sub(y, mul(yd, k1_stable)))), T / k2_stable))
+    this.y = y + T*yd
+    this.yd = yd + T * (x + k3*xd - y - k1_stable*yd) / k2_stable
     return y
   }
 }
