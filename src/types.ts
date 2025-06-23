@@ -3,6 +3,21 @@ export interface Vector {
   y: number
 }
 
+export type SolverType = Vector | number
+
+export function isVector(arg: unknown): arg is Vector {
+  if (arg && typeof arg === 'object') {
+    const vec = arg as Vector
+    if (
+      typeof vec.x === 'number' &&
+      typeof vec.y === 'number'
+    ) {
+      return true
+    }
+  }
+  return false
+}
+
 export interface GraphData {
   points: Vector[]
   min: number
