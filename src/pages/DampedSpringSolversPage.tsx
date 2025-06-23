@@ -12,16 +12,19 @@ import {
 } from '../dynamics/DampedSpringSemiImplicitEuler'
 import { drawLerpCurve } from '../draw'
 import { DampedSpringVerlet, type DampedSpringVerletArgs } from '../dynamics/DampedSpringVerlet'
+import { DampedSpringFullyImplicitEuler } from '../dynamics/DampedSpringFullyImplicitEuler'
 
 const INITIAL_VALUE_F = 4
 const INITIAL_VALUE_Z = 1
 const INITIAL_VALUE_R = 0
 const INITIAL_VALUE_DOMAIN = 6
 
+type SolverType = 'semi-euler' | 'full-euler' | 'verlet'
+
 export const DampedSpringSolversPage = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const canvas2Ref = useRef<HTMLCanvasElement>(null)
-  const [solverType, setSolverType] = useState<'euler' | 'verlet'>('euler')
+  const [solverType, setSolverType] = useState<SolverType>('full-euler')
   const [f, setF] = useState(INITIAL_VALUE_F)
   const [z, setZ] = useState(INITIAL_VALUE_Z)
   const [r, setR] = useState(INITIAL_VALUE_R)
@@ -54,7 +57,7 @@ export const DampedSpringSolversPage = () => {
 
   useEffect(() => {
     const getSolver = () => {
-      if (solverType === 'euler') {
+      if (solverType === 'semi-euler') {
         const solverArgs = {
           f,
           z,
@@ -64,6 +67,16 @@ export const DampedSpringSolversPage = () => {
           clampK2,
         } satisfies DampedSpringEulerArgs
         return new DampedSpringSemiImplicitEuler(solverArgs)
+      } else if (solverType === 'full-euler') {
+        const solverArgs = {
+          f,
+          z,
+          r,
+          initialValue: 0,
+          usePoleMatching: poleMatching,
+          clampK2,
+        } satisfies DampedSpringEulerArgs
+        return new DampedSpringFullyImplicitEuler(solverArgs)
       } else {
         const solverArgs = {
           f,
@@ -96,7 +109,7 @@ export const DampedSpringSolversPage = () => {
         <Stack
           direction="row"
           align="flex-start"
-          gap={30}
+          gap={50}
           className="container"
         >
           <Stack direction="column" gap={30}>
@@ -106,7 +119,8 @@ export const DampedSpringSolversPage = () => {
               value={solverType}
               setValue={setSolverType}
               options={[
-                { value: 'euler', label: 'Semi-implicit Euler' },
+                { value: 'semi-euler', label: 'Semi-implicit Euler' },
+                { value: 'full-euler', label: 'Fully-implicit Euler' },
                 { value: 'verlet', label: 'Verlet Integration' },
               ]}
               style={{
@@ -122,6 +136,7 @@ export const DampedSpringSolversPage = () => {
               max={10}
               step={0.001}
               reset={INITIAL_VALUE_F}
+              copiable
             />
             <Input
               label="Damp (z)"
@@ -132,6 +147,7 @@ export const DampedSpringSolversPage = () => {
               max={10}
               step={0.001}
               reset={INITIAL_VALUE_Z}
+              copiable
             />
             <Input
               label="Resp (r)"
@@ -142,6 +158,7 @@ export const DampedSpringSolversPage = () => {
               max={10}
               step={0.001}
               reset={INITIAL_VALUE_R}
+              copiable
             />
             <Input
               label="Domain"
