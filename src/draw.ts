@@ -25,7 +25,7 @@ export const drawLerpCurve = (
   lerpData: GraphData,
   expData: GraphData | undefined,
   mouse: Vector,
-  frame = -1,
+  time = -1,
 ) => {
   if (!canvas) return
   const ctx = canvas.getContext('2d')
@@ -198,14 +198,14 @@ export const drawLerpCurve = (
     plotLine(prev, point, colors.plot)
   }
 
-  if (frame > -1) {
-    const drawBallAt = (f: number, color: string) => {
-      const point = lerpData.points[Math.floor((f + lerpData.points.length) % lerpData.points.length)]
+  if (time > -1) {
+    const point = lerpData.points.find(point => point.x > time)
+    if (point) {
       const x = point.x / lerpData.domain
       const y = inverseLerp(lerpData.min, lerpData.max, point.y)
-      renderer.drawCircle(normX(x), normY(y), 5, color)
+      renderer.drawCircle(normX(x), normY(y), 6, colors.ball3)
+      renderer.drawCircle(normX(x), normY(y), 5, colors.ball2)
     }
-    drawBallAt(frame, colors.ball2 || '')
   }
 }
 

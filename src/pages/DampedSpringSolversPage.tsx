@@ -33,22 +33,28 @@ export const DampedSpringSolversPage = () => {
   const [domain, setDomain] = useState(INITIAL_VALUE_DOMAIN)
   const [animating, setAnimating] = useState(false)
   const [mouse, setMouse] = useState<Vector>({ x: -1, y: -1 })
-  const [frame, setFrame] = useState(0)
+  const [time, setTime] = useState(0)
 
   useEffect(() => {
     if (!animating) return
     let playing = true
-    setFrame(0)
+    let prevTime = performance.now() / 1000
     const loop = () => {
       if (!playing) return
-      setFrame(prev => prev + 1)
+      const delta = performance.now() / 1000 - prevTime
+      prevTime = performance.now() / 1000
+      setTime(prev => {
+        const newVal = prev + delta
+        if (newVal > domain) return 0
+        return newVal
+      })
       requestAnimationFrame(loop)
     }
     loop()
     return () => {
       playing = false
     }
-  }, [animating])
+  }, [animating, domain])
 
   useEffect(() => {
     const addCanvasMouseEvents = (canvas: HTMLCanvasElement | null) => {
@@ -115,9 +121,9 @@ export const DampedSpringSolversPage = () => {
       solver: getSolver(),
       variadicInput: true,
     })
-    drawLerpCurve(canvasRef.current, data, undefined, mouse, animating ? frame : -1)
-    drawLerpCurve(canvas2Ref.current, data2, undefined, mouse, animating ? frame : -1)
-  }, [f, z, r, poleMatching, clampK2, mouse, domain, solverType, frame, animating])
+    drawLerpCurve(canvasRef.current, data, undefined, mouse, animating ? time : -1)
+    drawLerpCurve(canvas2Ref.current, data2, undefined, mouse, animating ? time : -1)
+  }, [f, z, r, poleMatching, clampK2, mouse, domain, solverType, time, animating])
 
   return (
     <>
