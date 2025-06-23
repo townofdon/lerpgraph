@@ -15,6 +15,9 @@ const colors: Record<string, React.CSSProperties['color']> = {
   upperBound: 'darkgreen',
   mouse: 'darkcyan',
   input: 'darkmagenta',
+  ball: 'dodgerblue',
+  ball2: 'darkorchid',
+  ball3: 'lightseagreen',
 }
 
 export const drawLerpCurve = (
@@ -22,6 +25,7 @@ export const drawLerpCurve = (
   lerpData: GraphData,
   expData: GraphData | undefined,
   mouse: Vector,
+  frame = -1,
 ) => {
   if (!canvas) return
   const ctx = canvas.getContext('2d')
@@ -192,6 +196,16 @@ export const drawLerpCurve = (
     const prev = lerpData.points[i - 1]
     const point = lerpData.points[i]
     plotLine(prev, point, colors.plot)
+  }
+
+  if (frame > -1) {
+    const drawBallAt = (f: number, color: string) => {
+      const point = lerpData.points[Math.floor((f + lerpData.points.length) % lerpData.points.length)]
+      const x = point.x / lerpData.domain
+      const y = inverseLerp(lerpData.min, lerpData.max, point.y)
+      renderer.drawCircle(normX(x), normY(y), 5, color)
+    }
+    drawBallAt(frame, colors.ball2 || '')
   }
 }
 

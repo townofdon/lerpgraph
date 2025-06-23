@@ -31,7 +31,24 @@ export const DampedSpringSolversPage = () => {
   const [poleMatching, setPoleMatching] = useState(false)
   const [clampK2, setClampK2] = useState(true)
   const [domain, setDomain] = useState(INITIAL_VALUE_DOMAIN)
+  const [animating, setAnimating] = useState(false)
   const [mouse, setMouse] = useState<Vector>({ x: -1, y: -1 })
+  const [frame, setFrame] = useState(0)
+
+  useEffect(() => {
+    if (!animating) return
+    let playing = true
+    setFrame(0)
+    const loop = () => {
+      if (!playing) return
+      setFrame(prev => prev + 1)
+      requestAnimationFrame(loop)
+    }
+    loop()
+    return () => {
+      playing = false
+    }
+  }, [animating])
 
   useEffect(() => {
     const addCanvasMouseEvents = (canvas: HTMLCanvasElement | null) => {
@@ -98,9 +115,9 @@ export const DampedSpringSolversPage = () => {
       solver: getSolver(),
       variadicInput: true,
     })
-    drawLerpCurve(canvasRef.current, data, undefined, mouse)
-    drawLerpCurve(canvas2Ref.current, data2, undefined, mouse)
-  }, [f, z, r, poleMatching, clampK2, mouse, domain, solverType])
+    drawLerpCurve(canvasRef.current, data, undefined, mouse, animating ? frame : -1)
+    drawLerpCurve(canvas2Ref.current, data2, undefined, mouse, animating ? frame : -1)
+  }, [f, z, r, poleMatching, clampK2, mouse, domain, solverType, frame, animating])
 
   return (
     <>
@@ -181,6 +198,12 @@ export const DampedSpringSolversPage = () => {
               label="Clamp K2"
               checked={clampK2}
               toggle={setClampK2}
+            />
+            <Toggle
+              name="preview-animation"
+              label="Preview Animation"
+              checked={animating}
+              toggle={setAnimating}
             />
           </Stack>
           <div>
