@@ -23,6 +23,16 @@ h1 {
 h1, h2, h3, h4, h5, h6, strong  {
   color: #E6E7E9;
   color: #fff;
+
+  > a {
+    color: #fff;
+    font-weight: inherit;
+  }
+}
+
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
 }
 
 a {
@@ -41,15 +51,6 @@ body {
   align-items: center;
   width: 100vw;
   min-height: 100vh;
-}
-
-div#root {
-  display: flex;
-}
-
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
 }
 
 button {
@@ -86,6 +87,10 @@ input[type=range] {
 ul li {
   margin-top: 3px;
   margin-bottom: 3px;
+}
+
+canvas {
+  margin-top: 20px;
 }
 
 @media (prefers-color-scheme: light) {

@@ -1,8 +1,9 @@
 import React from 'react'
 import { Route, Routes } from 'react-router'
 
-import { HomePage } from './pages/HomePage'
 import { useSlideEvents } from './hooks/useSlideEvents'
+import { HomePage } from './pages/HomePage'
+import { Page404 } from './pages/404Page'
 import { Slide01 } from './pages/slides/Slide01'
 import { Slide01b } from './pages/slides/Slide01b'
 import { Slide02 } from './pages/slides/Slide02'
@@ -70,6 +71,7 @@ function App() {
           })}
         />
       ))}
+      <Route path='*' element={<Page404 />} />
     </Routes>
   )
 }

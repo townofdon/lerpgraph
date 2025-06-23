@@ -15,6 +15,7 @@ import {
 } from '../utils/utils'
 import { Code } from '../components/Code'
 import { DragChaseTest } from '../components/DragChaseTest'
+import { Header } from '../components/Header'
 
 const INITIAL_LERP_WEIGHT = 0.2
 const FPS = 60
@@ -116,12 +117,11 @@ export function HomePage() {
     drawLerpCurve(canvasRef.current, lerpData, expData, mouse)
   }, [initialValue, targetValue, tValue, decay, domain, mouse])
 
-  return (
+  const content = (
     <main>
       <Stack direction="row" align="flex-start" gap={30} className="container">
         <Stack direction="column">
           <div>
-            <h1>lerpgraph</h1>
             <p>
               <small>
                 Leveraging{' '}
@@ -172,7 +172,7 @@ export function HomePage() {
               setValue={setLogDecay}
               slider
               min={1}
-              max={100}
+              max={10}
               step={0.01}
               copiable
             />
@@ -194,10 +194,11 @@ export function HomePage() {
         </div>
       </Stack>
       <Stack
+        className="container"
         direction="row"
         gap={30}
         justify="space-between"
-        style={{ width: '100%' }}
+        style={{ marginTop: 60 }}
       >
         <Stack direction="column">
           <div className="example-code" style={{ minWidth: 400 }}>
@@ -259,5 +260,12 @@ export function HomePage() {
         <DragChaseTest decay={decay} tValue={tValue} />
       </Stack>
     </main>
+  )
+
+  return (
+    <>
+      <Header />
+      {content}
+    </>
   )
 }
