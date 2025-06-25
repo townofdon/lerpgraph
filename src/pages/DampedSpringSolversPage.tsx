@@ -4,22 +4,16 @@ import { Select } from '../components/Select'
 import { Stack } from '../components/Stack'
 import { Input } from '../components/Input'
 import { Toggle } from '../components/Toggle'
-import type { Vector } from '../types'
+import type { SolverType, Vector } from '../types'
 import { computeSolverCurve } from '../utils/compute'
-import {
-  DampedSpringSemiImplicitEuler,
-  type DampedSpringEulerArgs,
-} from '../dynamics/DampedSpringSemiImplicitEuler'
 import { drawLerpCurve } from '../draw'
-import { DampedSpringVerlet, type DampedSpringVerletArgs } from '../dynamics/DampedSpringVerlet'
-import { DampedSpringFullyImplicitEuler } from '../dynamics/DampedSpringFullyImplicitEuler'
+import { getSpringSolver } from '../utils/getSpringSolver'
+import { DragChaseTest } from '../components/DragChaseTest'
 
 const INITIAL_VALUE_F = 4
 const INITIAL_VALUE_Z = 1
 const INITIAL_VALUE_R = 0
 const INITIAL_VALUE_DOMAIN = 6
-
-type SolverType = 'semi-euler' | 'full-euler' | 'verlet'
 
 export const DampedSpringSolversPage = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -43,7 +37,7 @@ export const DampedSpringSolversPage = () => {
       if (!playing) return
       const delta = performance.now() / 1000 - prevTime
       prevTime = performance.now() / 1000
-      setTime(prev => {
+      setTime((prev) => {
         const newVal = prev + delta
         if (newVal > domain) return 0
         return newVal
@@ -79,39 +73,15 @@ export const DampedSpringSolversPage = () => {
   }, [])
 
   useEffect(() => {
-    const getSolver = () => {
-      if (solverType === 'semi-euler') {
-        const solverArgs = {
-          f,
-          z,
-          r,
-          initialValue: 0,
-          usePoleMatching: poleMatching,
-          clampK2,
-        } satisfies DampedSpringEulerArgs
-        return new DampedSpringSemiImplicitEuler(solverArgs)
-      } else if (solverType === 'full-euler') {
-        const solverArgs = {
-          f,
-          z,
-          r,
-          initialValue: 0,
-          usePoleMatching: poleMatching,
-          clampK2,
-        } satisfies DampedSpringEulerArgs
-        return new DampedSpringFullyImplicitEuler(solverArgs)
-      } else {
-        const solverArgs = {
-          f,
-          z,
-          r,
-          initialValue: 0,
-          usePoleMatching: poleMatching,
-          clampK2,
-        } satisfies DampedSpringVerletArgs
-        return new DampedSpringVerlet(solverArgs)
-      }
-    }
+    const getSolver = () =>
+      getSpringSolver({
+        solverType,
+        f,
+        z,
+        r,
+        poleMatching,
+        clampK2,
+      })
     const data = computeSolverCurve({
       domain,
       solver: getSolver(),
@@ -121,9 +91,32 @@ export const DampedSpringSolversPage = () => {
       solver: getSolver(),
       variadicInput: true,
     })
-    drawLerpCurve(canvasRef.current, data, undefined, mouse, animating ? time : -1)
-    drawLerpCurve(canvas2Ref.current, data2, undefined, mouse, animating ? time : -1)
-  }, [f, z, r, poleMatching, clampK2, mouse, domain, solverType, time, animating])
+    drawLerpCurve(
+      canvasRef.current,
+      data,
+      undefined,
+      mouse,
+      animating ? time : -1,
+    )
+    drawLerpCurve(
+      canvas2Ref.current,
+      data2,
+      undefined,
+      mouse,
+      animating ? time : -1,
+    )
+  }, [
+    f,
+    z,
+    r,
+    poleMatching,
+    clampK2,
+    mouse,
+    domain,
+    solverType,
+    time,
+    animating,
+  ])
 
   return (
     <>
@@ -215,6 +208,15 @@ export const DampedSpringSolversPage = () => {
           <div>
             <canvas ref={canvasRef} width="800" height="400" />
             <canvas ref={canvas2Ref} width="800" height="400" />
+            <div style={{ marginTop: 30 }} />
+            <DragChaseTest
+              type={solverType}
+              f={f}
+              z={z}
+              r={r}
+              poleMatching={poleMatching}
+              clampK2={clampK2}
+            />
           </div>
         </Stack>
       </main>

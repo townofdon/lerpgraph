@@ -3,8 +3,6 @@ export interface Vector {
   y: number
 }
 
-export type SolverType = Vector | number
-
 export function isVector(arg: unknown): arg is Vector {
   if (arg && typeof arg === 'object') {
     const vec = arg as Vector
@@ -44,3 +42,5 @@ export type Easing =
   | 'in-quad'
   | 'out-quad'
   | 'in-out-quad'
+
+export type SolverType = 'semi-euler' | 'full-euler' | 'verlet'

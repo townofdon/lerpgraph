@@ -1,17 +1,36 @@
 import { useEffect, useRef, useState } from 'react'
-import { clamp, expDecay, lerp } from '../utils/utils'
 import { Stack } from './Stack'
+import type { SolverType } from '../types'
+import { clamp, expDecay, lerp } from '../utils/utils'
+import { getSpringSolver } from '../utils/getSpringSolver'
 
 const INITIAL_X = 400
 const INITIAL_Y = 125
 const BALL_SIZE = 50
 
+type DragChaseType = 'lerp' | SolverType
+
 interface DragChaseTestProps {
-  decay: number
-  tValue: number
+  type?: DragChaseType
+  decay?: number
+  tValue?: number
+  f?: number,
+  z?: number,
+  r?: number,
+  poleMatching?: boolean,
+  clampK2?: boolean,  
 }
 
-export const DragChaseTest = ({ decay, tValue }: DragChaseTestProps) => {
+export const DragChaseTest = ({
+  type = 'lerp',
+  decay = 0,
+  tValue = 0,
+  f = 0,
+  z = 0,
+  r = 0,
+  poleMatching = false,
+  clampK2 = false,
+}: DragChaseTestProps) => {
   const [dragging, setDragging] = useState(false)
   const [showYellowBall, setShowYellowBall] = useState(false)
   const [ax, setAx] = useState(INITIAL_X)
@@ -44,6 +63,7 @@ export const DragChaseTest = ({ decay, tValue }: DragChaseTestProps) => {
   refs.tValue.current = tValue
 
   useEffect(() => {
+    if (type !== 'lerp') return
     let playing = true
     let prevTime = performance.now()
     const loop = () => {
@@ -84,17 +104,59 @@ export const DragChaseTest = ({ decay, tValue }: DragChaseTestProps) => {
     refs.cy,
     refs.decay,
     refs.tValue,
+    type,
   ])
 
-  const handleMouseDown = () => {
-    setDragging(true)
-  }
-
-  const handleMouseUp = () => {
-    setDragging(false)
-  }
+  useEffect(() => {
+    if (type === 'lerp') return
+    let playing = true
+    let prevTime = performance.now()
+    const solverX = getSpringSolver({
+      solverType: type,
+      f,
+      z,
+      r,
+      poleMatching,
+      clampK2,
+      initialValue: refs.ax.current,
+    })
+    const solverY = getSpringSolver({
+      solverType: type,
+      f,
+      z,
+      r,
+      poleMatching,
+      clampK2,
+      initialValue: refs.ay.current,
+    })
+    const loop = () => {
+      if (!playing) return
+      const deltaTime = (performance.now() - prevTime) / 1000
+      setFps(1 / deltaTime)
+      prevTime = performance.now()
+      setBx(solverX.compute(deltaTime, refs.ax.current))
+      setBy(solverY.compute(deltaTime, refs.ay.current))
+      requestAnimationFrame(loop)
+    }
+    loop()
+    return () => {
+      playing = false
+    }
+  }, [
+    refs.ax,
+    refs.ay,
+    refs.bx,
+    refs.by,
+    f,
+    z,
+    r,
+    poleMatching,
+    clampK2,
+    type,
+  ])
 
   useEffect(() => {
+    if (!containerRef.current) return
     if (!dragging) return
     const handleMouseMove = (ev: MouseEvent) => {
       if (!dragging) return
@@ -107,11 +169,20 @@ export const DragChaseTest = ({ decay, tValue }: DragChaseTestProps) => {
       setAx(clamp(x, 0, containerWidth - BALL_SIZE))
       setAy(clamp(y, 0, containerHeight - BALL_SIZE))
     }
+    const handleMouseUp = () => {
+      setDragging(false)
+    }
     document.addEventListener('mousemove', handleMouseMove)
+    document.addEventListener('mouseup', handleMouseUp)
     return () => {
       document.removeEventListener('mousemove', handleMouseMove)
+      document.removeEventListener('mouseup', handleMouseUp)
     }
   }, [dragging])
+
+  const handleMouseDown = () => {
+    setDragging(true)
+  }
 
   return (
     <Stack direction="column" align="flex-start">
@@ -125,6 +196,7 @@ export const DragChaseTest = ({ decay, tValue }: DragChaseTestProps) => {
           background: '#111',
           border: '4px solid #191919',
           userSelect: 'none',
+          // overflow: 'hidden',
         }}
       >
         <span
@@ -165,7 +237,7 @@ export const DragChaseTest = ({ decay, tValue }: DragChaseTestProps) => {
         <div
           ref={draggableBallRef}
           onMouseDown={handleMouseDown}
-          onMouseUp={handleMouseUp}
+          // onMouseUp={handleMouseUp}
           style={{
             top: ay,
             left: ax,
@@ -179,28 +251,41 @@ export const DragChaseTest = ({ decay, tValue }: DragChaseTestProps) => {
         />
       </div>
       <div style={{ paddingLeft: 5 }}>
-        <p style={{ alignSelf: 'flex-start', marginLeft: -3 }}>
-          <label htmlFor="">
-            <input type="checkbox" checked={showYellowBall} onChange={() => setShowYellowBall(prev => !prev)} />{' '}
-            <strong>Show lerp smoothing discrepancy (yellow ball)</strong>
-          </label>
-        </p>
+        {type === 'lerp' && (
+          <p style={{ alignSelf: 'flex-start', marginLeft: -3 }}>
+            <label htmlFor="">
+              <input
+                type="checkbox"
+                checked={showYellowBall}
+                onChange={() => setShowYellowBall((prev) => !prev)}
+              />{' '}
+              <strong>Show lerp smoothing discrepancy (yellow ball)</strong>
+            </label>
+          </p>
+        )}
         <p>
           Drag the <span className="accent5">red</span> ball around. The{' '}
           <span className="accent4">blue</span> ball will chase.
         </p>
-        <p>
-          The <strong className="accent3">yellow</strong> ball uses lerp
-          smoothing and is <strong>NOT</strong> framerate independent. If you see it,<br/>your framerate is not 60 fps.
-        </p>
-        <p>
-          <em>
-            <small>
-              At 60 fps, the yellow ball tracks at the same speed as the blue
-              ball. Its speed varies at other framerates.
-            </small>
-          </em>
-        </p>
+        {type === 'lerp' && (
+          <>
+            <p>
+              The <strong className="accent3">yellow</strong> ball uses lerp
+              smoothing and is <strong>NOT</strong> framerate independent. If you
+              see it,
+              <br />
+              your framerate is not 60 fps.
+            </p>
+            <p>
+              <em>
+                <small>
+                  At 60 fps, the yellow ball tracks at the same speed as the blue
+                  ball. Its speed varies at other framerates.
+                </small>
+              </em>
+            </p>
+          </>  
+        )}
       </div>
     </Stack>
   )
