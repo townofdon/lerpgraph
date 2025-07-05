@@ -6,7 +6,7 @@ import { HomePage } from './pages/HomePage'
 import { DampedSpringSolversPage } from './pages/DampedSpringSolversPage'
 import { Page404 } from './pages/404Page'
 import { Slide01 } from './pages/slides/Slide01'
-import { Slide01b } from './pages/slides/Slide01b'
+// import { Slide01b } from './pages/slides/Slide01b'
 import { Slide02 } from './pages/slides/Slide02'
 import { Slide02b } from './pages/slides/Slide02b'
 import { Slide02c } from './pages/slides/Slide02c'
@@ -31,7 +31,7 @@ import { Slide19 } from './pages/slides/Slide19'
 
 const slides = [
   Slide01,
-  Slide01b,
+  // Slide01b,
   Slide02,
   Slide02b,
   Slide02c,
